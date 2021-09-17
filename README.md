@@ -33,6 +33,10 @@
 | AddChild   | ATreeNode | ATreeNode | You can call this function to link child node, function return the child node |
 | StopSelf   |       |  | Called when the time tree is stop(timetree is break, not finished), by default it call OnExit to process stop event |
 
+| Field          | Type | ReamMe                              |
+|----------------|:----:|-------------------------------------|
+| IsSelfFinished | bool | Set true when your node is finished |
+
 ### TimeTree
 | Fun's Name |    Params    | Return    | ReamMe                                      |
 |------------|:------------:|-----------|---------------------------------------------|

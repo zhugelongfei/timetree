@@ -8,6 +8,11 @@ namespace Lonfee.TimeTree
         private Action<bool> finishedCallback;
         private bool isRunning = false;
 
+        public bool IsRunning
+        {
+            get { return isRunning; }
+        }
+
         public TimeTree()
             : this(null)
         {

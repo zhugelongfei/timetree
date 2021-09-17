@@ -13,5 +13,12 @@
   "author": {
     "name": "Lonfee",
     "email": "18519720472@163.com"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "SimpleSample",
+      "description": "",
+      "path": "Samples~/Test"
+    }
+  ]
 }
