@@ -4,21 +4,37 @@ namespace Lonfee.TimeTree
 {
     public abstract class ATreeNode
     {
+        private enum EState
+        {
+            None,
+            Running,
+            Finished,
+        }
+
+        private const int CHILD_DEFAULT_SIZE = 2;
+
         protected List<ATreeNode> childList = null;
-        private bool isSelfFinished = false;
-        private bool isRunning = false;
+        private EState mState = EState.None;
 
         protected bool IsSelfFinished
         {
-            get { return isSelfFinished; }
-            set { isSelfFinished = value; OnSelfFinished(); }
+            get { return mState == EState.Finished; }
+            set
+            {
+                if (value && mState != EState.Finished)
+                {
+                    mState = EState.Finished;
+
+                    OnSelfFinished();
+                }
+            }
         }
 
         internal bool IsFinished
         {
             get
             {
-                if (!isSelfFinished)
+                if (mState != EState.Finished)
                     return false;
 
                 if (childList == null)
@@ -40,7 +56,7 @@ namespace Lonfee.TimeTree
                 return null;
 
             if (childList == null)
-                childList = new List<ATreeNode>(2);
+                childList = new List<ATreeNode>(CHILD_DEFAULT_SIZE);
 
             childList.Add(node);
 
@@ -59,8 +75,6 @@ namespace Lonfee.TimeTree
         {
             Exit();
 
-            isRunning = false;
-
             if (childList != null)
             {
                 for (int i = 0, iMax = childList.Count; i < iMax; i++)
@@ -72,17 +86,17 @@ namespace Lonfee.TimeTree
 
         internal void Enter()
         {
-            isSelfFinished = false;
+            mState = EState.Running;
 
-            isRunning = true;
-
-            UnityEngine.Debug.LogError("Enter : " + this);
+#if DEBUG_LF_TIME_TREE && UNITY_EDITOR
+            UnityEngine.Debug.LogFormat(">>>>Enter: {0}", this.ToString());
+#endif
             OnEnter();
         }
 
         internal void Update(float deltaTime)
         {
-            if (!isSelfFinished)
+            if (mState != EState.Finished)
             {
                 // update self
                 OnUpdate(deltaTime);
@@ -103,7 +117,10 @@ namespace Lonfee.TimeTree
         internal void Exit()
         {
             OnExit();
-            UnityEngine.Debug.LogError("Exit : " + this);
+
+#if DEBUG_LF_TIME_TREE && UNITY_EDITOR
+            UnityEngine.Debug.LogFormat("<<<<Exit: {0}", this.ToString());
+#endif
         }
 
         protected abstract void OnEnter();
@@ -114,14 +131,14 @@ namespace Lonfee.TimeTree
 
         internal void Stop()
         {
-            if (!isSelfFinished)
+            if (mState == EState.None)
+                return;
+
+            if (mState == EState.Running)
             {
-                if (isRunning)
-                {
-                    StopSelf();
-                }
+                StopSelf();
             }
-            else
+            else if (mState == EState.Finished)
             {
                 if (childList != null)
                 {

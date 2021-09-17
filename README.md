@@ -1,8 +1,7 @@
-# Object pool for unity(C#)
+# Time tree for unity(C#)
 
 # 介绍
-游戏中不停创建释放的对象，可使用对象池管理，达到减少gc的目的。
-比较常见的对象池模块，对象池的对象由工厂进行生产。创建对象所需的参数，可在new工厂对象时，传递到工厂对象中。
+树状图执行行为框架，父节点执行完毕后，执行所有子节点（由上至下，直至所有节点结束），用于实现一些常见的特效流程控制
 此工程为Unity Package的Git包，可通过Unity的PackageManagerWindow导入到需要使用的项目中。
 
 # Unity导入步骤
@@ -11,11 +10,34 @@
 - 复制git工程的地址，粘贴到输入栏
 - 点击Add
 
+# 框架图
+![Frame](/Images/Frame.png)
+
 # 应用场景
-- 射击游戏中发射的子弹，超出屏幕后，回收到对象池，再次使用时，直接从对象池拿出即可，
-- ...
+![Sample](/Images/Sample.png)
 
 # 使用方法
-- 实现IPoolObject接口，来管理对象Ctor（有无参数取决于工厂类），Pop，Push，和OnDestroy的处理。
-- 实现IPoolObjectFactory接口，用以创建上一步的对象
-- 创建ObjectPool对象，构造函数中将工厂对象传入即可。
+- 1：实现ATreeNode的各种派生类。
+- 2：创建TimeTree对象
+- 3：将ATreeNode的派生类对象链接到TimeTree对象的EntryNode或上一个Node
+- 4：执行TimTree对象的Start函数即可。
+- 项目中有简单示例，导入Unity运行即可。
+
+# API
+### ATreeNode
+| Function |   Params  | Return | ReamMe                                                                                                              |
+|------------|:---------:|:--------:|---------------------------------------------------------------------------------------------------------------------|
+| OnEnter    |       |  | Called when enter this node                                                                                         |
+| OnUpdate   |       |  | Called when node is running                                                                                         |
+| OnExit     |       |  | Called when exit the node                                                                                           |
+| AddChild   | ATreeNode | ATreeNode | You can call this function to link child node, function return the child node |
+| StopSelf   |       |  | Called when the time tree is stop(timetree is break, not finished), by default it call OnExit to process stop event |
+
+### TimeTree
+| Fun's Name |    Params    | Return    | ReamMe                                      |
+|------------|:------------:|-----------|---------------------------------------------|
+| Ctor       | Action<bool> |           | Create a time tree with finished callback   |
+| Start      |              |           | Start the time tree                         |
+| Update     |     float    |           | Update total node whith delta time          |
+| Stop       |              |           | Stop time tree if time tree is not finished |
+| GetEntry   |              | ATreeNode | Return entry node                           |
