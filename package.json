@@ -1,0 +1,17 @@
+{
+  "name": "com.lonfee.timetree",
+  "version": "1.0.0",
+  "displayName": "Lonfee Time Tree",
+  "description": "Time tree for unity.",
+  "hideInEditor": false,
+  "dependencies": {
+    
+  },
+  "keywords": [
+    
+  ],
+  "author": {
+    "name": "Lonfee",
+    "email": "18519720472@163.com"
+  }
+}
